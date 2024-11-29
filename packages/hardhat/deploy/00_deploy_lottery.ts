@@ -25,7 +25,7 @@ const deployLottery: DeployFunction = async function (hre: HardhatRuntimeEnviron
   const TOKEN_RATIO = 1n;
 
   const deployment = await deploy("Lottery", {
-    from: deployer,
+    from: deployer!,
     // Contract constructor arguments
     args: ["LotteryToken", "LTO", TOKEN_RATIO, parseEther(BET_PRICE), parseEther(BET_FEE)],
     log: true,
@@ -36,13 +36,15 @@ const deployLottery: DeployFunction = async function (hre: HardhatRuntimeEnviron
 
   // Get the deployed contract to interact with it after deploying.
   const contract = await hre.ethers.getContract<Contract>("Lottery", deployer);
+  // @ts-expect-error ignore
+  const tokenAddress = contract != null ? await contract.paymentToken() : null;
   console.log(
-    "👋 Lottery contract deployed at ",
+    "👋 Lottery contract deployed at",
     deployment.address,
-    " with deployer ",
+    "with deployer",
     deployer,
-    ". Token address:",
-    await contract.paymentToken(),
+    "Token address:",
+    tokenAddress,
   );
 };
 
