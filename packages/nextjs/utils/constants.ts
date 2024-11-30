@@ -36,7 +36,7 @@ export const constants = Object.freeze({
   routes: {
     home: "/",
     debug: "debug",
-    test: "test",
+    explorer: "blockexplorer",
     api: {
       base: cwaServerUrl + (cwaServerUrl?.charAt(cwaServerUrl?.length - 1) !== "/" ? "/" : "") + "api/",
     },
