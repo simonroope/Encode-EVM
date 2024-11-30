@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import Lottery from "@contracts/Lottery.json";
+import deployedContracts from "@contracts/deployedContracts";
+import { useScaffoldReadContract } from "@hooks/scaffold-eth";
 import { notification } from "@utils/scaffold-eth";
-import {Hex, parseEther} from "viem";
+import { Hex, parseEther } from "viem";
 import { useAccount, useDeployContract } from "wagmi";
 
 export const DeployLottery = () => {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
   const { deployContract, data, error: deploymentError, isSuccess } = useDeployContract();
   const [mounted, setMounted] = useState(false);
   const [tokenName, setTokenName] = useState("");
@@ -15,16 +17,14 @@ export const DeployLottery = () => {
   const [betFee, setBetFee] = useState(0.2);
   const [loading, setLoading] = useState(false);
   console.log(
-    "DeployLottery -> init -> mounted",
+    "DeployLottery -> init -> isConnected",
+    isConnected,
+    "chainId",
+    chainId,
+    "mounted",
     mounted,
     "loading",
     loading,
-    "token",
-    tokenName,
-    tokenSymbol,
-    purchaseRatio,
-    betPrice,
-    betFee,
   );
 
   useEffect(() => {
@@ -33,8 +33,25 @@ export const DeployLottery = () => {
     }
   }, [isConnected]);
 
+  // @ts-expect-error ignore
+  const deployedContract = deployedContracts[chainId]?.Lottery;
+  const { data: tokenAddress } = useScaffoldReadContract({
+    contractName: "Lottery",
+    functionName: "paymentToken",
+    args: [],
+  });
+  console.log("DeployLottery -> deployedContract", deployedContract?.address, "tokenAddress", tokenAddress);
+
   const deployLottery = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(
+      "DeployLottery -> deployLottery -> params",
+      tokenName,
+      tokenSymbol,
+      purchaseRatio,
+      betPrice,
+      betFee,
+    );
 
     if (!window.ethereum || address === null) {
       notification.error("Please connect to a wallet to deploy the lottery contract.");
@@ -70,7 +87,9 @@ export const DeployLottery = () => {
         "data",
         data,
       );
-      notification.success("Lottery contract deployed successfully.");
+      notification.success(
+        "Lottery contract deployed successfully. You should update the contract addresses in the `deployedContracts` object.",
+      );
     } catch (error) {
       console.error("Error deploying contract:", error);
       notification.error("Deployment failed. Check console for details.");
@@ -79,7 +98,35 @@ export const DeployLottery = () => {
     }
   };
 
-  if (!mounted) return null;
+  if (!mounted || !isConnected || !chainId) return null;
+
+  if (deployedContract) {
+    return (
+      <>
+        <h2 className="text-xl font-bold">Deployed Contract Details</h2>
+
+        <label className="form-control w-full">
+          <div className="label">
+            <span className="label-text">Lottery contract</span>
+            <span className="label-text-alt">Address</span>
+          </div>
+          <code className="flex-1 block whitespace-pre overflow-none text-left bg-base-200 p-2 rounded-md">
+            {deployedContract.address}
+          </code>
+        </label>
+
+        <label className="form-control w-full">
+          <div className="label">
+            <span className="label-text">Token contract</span>
+            <span className="label-text-alt">Address</span>
+          </div>
+          <code className="flex-1 block whitespace-pre overflow-none text-left bg-base-200 p-2 rounded-md">
+            {tokenAddress}
+          </code>
+        </label>
+      </>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center p-4">
