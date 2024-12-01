@@ -83,31 +83,31 @@ contract Lottery is Ownable {
     }
 
     function betMany(uint256 times) external whenBetsOpen {
-    require(times > 0, "Number of times must be greater than zero");
-    uint256 totalBetPrice = betPrice * times;
-    uint256 totalBetFee = betFee * times;
-    uint256 totalAmount = totalBetPrice + totalBetFee;
+        require(times > 0, "Number of times must be greater than zero");
+        uint256 totalBetPrice = betPrice * times;
+        uint256 totalBetFee = betFee * times;
+        uint256 totalAmount = totalBetPrice + totalBetFee;
 
-    require(
-        paymentToken.balanceOf(msg.sender) >= totalAmount,
-        "Not enough tokens"
-    );
-    require(
-        paymentToken.allowance(msg.sender, address(this)) >= totalAmount,
-        "Not enough allowance"
-    );
+        require(
+          paymentToken.balanceOf(msg.sender) >= totalAmount,
+          "Not enough tokens"
+        );
+        require(
+          paymentToken.allowance(msg.sender, address(this)) >= totalAmount,
+          "Not enough allowance"
+        );
 
-    ownerPool += totalBetFee;
-    prizePool += totalBetPrice;
+        ownerPool += totalBetFee;
+        prizePool += totalBetPrice;
 
-    uint256 localTimes = times;
-    while (localTimes > 0) {
-      _slots.push(msg.sender);
-      localTimes--;
+        uint256 localTimes = times;
+        while (localTimes > 0) {
+          _slots.push(msg.sender);
+          localTimes--;
+        }
+
+        paymentToken.transferFrom(msg.sender, address(this), totalAmount);
     }
-
-    paymentToken.transferFrom(msg.sender, address(this), totalAmount);
-}
 
 
     /// @notice Closes the lottery and calculates the prize, if any
