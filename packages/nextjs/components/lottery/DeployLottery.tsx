@@ -44,14 +44,7 @@ export const DeployLottery = () => {
 
   const deployLottery = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(
-      "DeployLottery -> deployLottery -> params",
-      tokenName,
-      tokenSymbol,
-      purchaseRatio,
-      betPrice,
-      betFee,
-    );
+    console.log("DeployLottery -> deployLottery -> params", tokenName, tokenSymbol, purchaseRatio, betPrice, betFee);
 
     if (!window.ethereum || address === null) {
       notification.error("Please connect to a wallet to deploy the lottery contract.");
@@ -103,14 +96,14 @@ export const DeployLottery = () => {
   if (deployedContract) {
     return (
       <>
-        <h2 className="text-xl font-bold">Deployed Contract Details</h2>
+        <h2 className="text-xl font-bold text-center">Deployed Contract Details</h2>
 
         <label className="form-control w-full">
           <div className="label">
             <span className="label-text">Lottery contract</span>
             <span className="label-text-alt">Address</span>
           </div>
-          <code className="flex-1 block whitespace-pre overflow-none text-left bg-base-200 p-2 rounded-md">
+          <code className="flex-1 block whitespace-pre overflow-none text-left bg-base-100 p-2 rounded-md">
             {deployedContract.address}
           </code>
         </label>
@@ -120,7 +113,7 @@ export const DeployLottery = () => {
             <span className="label-text">Token contract</span>
             <span className="label-text-alt">Address</span>
           </div>
-          <code className="flex-1 block whitespace-pre overflow-none text-left bg-base-200 p-2 rounded-md">
+          <code className="flex-1 block whitespace-pre overflow-none text-left bg-base-100 p-2 rounded-md">
             {tokenAddress}
           </code>
         </label>

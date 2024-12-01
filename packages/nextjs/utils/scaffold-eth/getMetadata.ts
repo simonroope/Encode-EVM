@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
 import { constants } from "@utils/constants";
+import type { Metadata } from "next";
 
 const baseUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
   ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
