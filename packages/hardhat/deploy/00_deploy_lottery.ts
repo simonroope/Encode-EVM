@@ -24,6 +24,8 @@ const deployLottery: DeployFunction = async function (hre: HardhatRuntimeEnviron
   const BET_FEE = "0.2";
   const TOKEN_RATIO = 1n;
 
+  const chainId = await hre.getChainId();
+
   const deployment = await deploy("Lottery", {
     from: deployer!,
     // Contract constructor arguments
@@ -39,7 +41,9 @@ const deployLottery: DeployFunction = async function (hre: HardhatRuntimeEnviron
   // @ts-expect-error ignore
   const tokenAddress = contract != null ? await contract.paymentToken() : null;
   console.log(
-    "👋 Lottery contract deployed at",
+    "👋 Lottery contract deployed on",
+    chainId,
+    "to:",
     deployment.address,
     "with deployer",
     deployer,

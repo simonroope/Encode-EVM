@@ -3,30 +3,30 @@ import { ethers } from "hardhat";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { LotteryToken } from "@typechain-types";
 
-const CONTRACT_NAME = "LotteryToken";
-
-describe(CONTRACT_NAME, function () {
+describe('LotteryToken', function () {
   // We define a fixture to reuse the same setup in every test.
-  let contract: LotteryToken;
+  let tokenContract: LotteryToken;
+
   let deployer: HardhatEthersSigner;
   before(async () => {
     const [owner] = await ethers.getSigners();
     deployer = owner!;
-    const contractFactory = await ethers.getContractFactory(CONTRACT_NAME, owner!);
-    contract = (await contractFactory.deploy("Lottery Token", "LTK")) as LotteryToken;
-    await contract.waitForDeployment();
+    const contractFactory = await ethers.getContractFactory('LotteryToken', owner!);
+    tokenContract = (await contractFactory.deploy("Lottery Token", "LTK")) as LotteryToken;
+    await tokenContract.waitForDeployment();
+    // console.log("LotteryToken contract deployed to:", tokenContract.target, await tokenContract.getAddress());
   });
 
   describe("Deployment", function () {
     it("Should have the correct name", async function () {
-      expect(await contract.name()).to.equal("Lottery Token");
+      expect(await tokenContract.name()).to.equal("Lottery Token");
     });
     it("Should have the correct symbol", async function () {
-      expect(await contract.symbol()).to.equal("LTK");
+      expect(await tokenContract.symbol()).to.equal("LTK");
     });
     it("Deployer should have the minter role", async function () {
-      const minterRole = await contract.MINTER_ROLE();
-      expect(await contract.hasRole(minterRole, deployer)).to.be.true;
+      const minterRole = await tokenContract.MINTER_ROLE();
+      expect(await tokenContract.hasRole(minterRole, deployer)).to.be.true;
     });
   });
 });
